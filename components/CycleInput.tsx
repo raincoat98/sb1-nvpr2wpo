@@ -1,7 +1,23 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+} from 'react-native';
 import Modal from 'react-native-modal';
-import { X } from 'lucide-react-native';
+import { X, Calendar } from 'lucide-react-native';
+import {
+  Colors,
+  Typography,
+  Spacing,
+  Gap,
+  BorderRadius,
+  Shadows,
+} from '@/constants/theme';
+import { PeriodDatePicker } from './PeriodDatePicker';
 
 interface CycleInputProps {
   visible: boolean;
@@ -10,16 +26,30 @@ interface CycleInputProps {
 }
 
 export function CycleInput({ visible, onClose, onSubmit }: CycleInputProps) {
-  const [lastPeriodDate, setLastPeriodDate] = useState('');
+  const [lastPeriodDate, setLastPeriodDate] = useState<Date | null>(null);
   const [cycleLength, setCycleLength] = useState('28');
   const [periodLength, setPeriodLength] = useState('5');
   const [goal, setGoal] = useState('general');
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const goals = [
-    { key: 'general', label: '일반 관리', color: '#FF69B4' },
-    { key: 'pregnancy', label: '임신 준비', color: '#9370DB' },
-    { key: 'contraception', label: '피임', color: '#FF8C00' }
+    { key: 'general', label: '일반 관리', color: Colors.primary },
+    { key: 'pregnancy', label: '임신 준비', color: Colors.secondary },
+    { key: 'contraception', label: '피임', color: Colors.accent },
   ];
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
+  const handleDateSelect = (date: Date) => {
+    setLastPeriodDate(date);
+    setShowDatePicker(false);
+  };
 
   const handleSubmit = () => {
     if (!lastPeriodDate || !cycleLength || !periodLength) {
@@ -27,11 +57,11 @@ export function CycleInput({ visible, onClose, onSubmit }: CycleInputProps) {
     }
 
     const data = {
-      lastPeriodDate,
+      lastPeriodDate: lastPeriodDate.toISOString(),
       cycleLength: parseInt(cycleLength),
       periodLength: parseInt(periodLength),
       goal,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     onSubmit(data);
@@ -42,7 +72,8 @@ export function CycleInput({ visible, onClose, onSubmit }: CycleInputProps) {
       isVisible={visible}
       onBackdropPress={onClose}
       onBackButtonPress={onClose}
-      style={styles.modal}>
+      style={styles.modal}
+    >
       <View style={styles.modalContent}>
         <View style={styles.modalHeader}>
           <Text style={styles.modalTitle}>주기 정보 입력</Text>
@@ -52,14 +83,18 @@ export function CycleInput({ visible, onClose, onSubmit }: CycleInputProps) {
         </View>
 
         <View style={styles.inputSection}>
-          <Text style={styles.label}>최근 생리 시작일</Text>
-          <TextInput
-            style={styles.dateInput}
-            placeholder="YYYY-MM-DD"
-            placeholderTextColor="#A0A0A0"
-            value={lastPeriodDate}
-            onChangeText={setLastPeriodDate}
-          />
+          <Text style={styles.label}>생리 시작일</Text>
+          <TouchableOpacity
+            style={styles.dateButton}
+            onPress={() => setShowDatePicker(true)}
+          >
+            <Calendar size={20} color={Colors.primary} />
+            <Text style={styles.dateText}>
+              {lastPeriodDate
+                ? formatDate(lastPeriodDate)
+                : '날짜를 선택해주세요'}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.inputRow}>
@@ -74,7 +109,7 @@ export function CycleInput({ visible, onClose, onSubmit }: CycleInputProps) {
               onChangeText={setCycleLength}
             />
           </View>
-          
+
           <View style={styles.inputHalf}>
             <Text style={styles.label}>생리 기간 (일)</Text>
             <TextInput
@@ -98,14 +133,17 @@ export function CycleInput({ visible, onClose, onSubmit }: CycleInputProps) {
                   styles.goalButton,
                   goal === goalItem.key && {
                     backgroundColor: goalItem.color,
-                    borderColor: goalItem.color
-                  }
+                    borderColor: goalItem.color,
+                  },
                 ]}
-                onPress={() => setGoal(goalItem.key)}>
-                <Text style={[
-                  styles.goalText,
-                  goal === goalItem.key && styles.activeGoalText
-                ]}>
+                onPress={() => setGoal(goalItem.key)}
+              >
+                <Text
+                  style={[
+                    styles.goalText,
+                    goal === goalItem.key && styles.activeGoalText,
+                  ]}
+                >
                   {goalItem.label}
                 </Text>
               </TouchableOpacity>
@@ -116,13 +154,22 @@ export function CycleInput({ visible, onClose, onSubmit }: CycleInputProps) {
         <TouchableOpacity
           style={[
             styles.submitButton,
-            (!lastPeriodDate || !cycleLength || !periodLength) && styles.disabledButton
+            (!lastPeriodDate || !cycleLength || !periodLength) &&
+              styles.disabledButton,
           ]}
           onPress={handleSubmit}
-          disabled={!lastPeriodDate || !cycleLength || !periodLength}>
+          disabled={!lastPeriodDate || !cycleLength || !periodLength}
+        >
           <Text style={styles.submitButtonText}>저장하기</Text>
         </TouchableOpacity>
       </View>
+
+      <PeriodDatePicker
+        visible={showDatePicker}
+        onClose={() => setShowDatePicker(false)}
+        onSubmit={handleDateSelect}
+        initialDate={lastPeriodDate || new Date()}
+      />
     </Modal>
   );
 }
@@ -133,108 +180,110 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    padding: 20,
+    backgroundColor: Colors.white,
+    borderTopLeftRadius: BorderRadius['3xl'],
+    borderTopRightRadius: BorderRadius['3xl'],
+    padding: Spacing.xl,
     maxHeight: '80%',
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 30,
-    paddingBottom: 15,
+    marginBottom: Spacing['3xl'],
+    paddingBottom: Spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: Colors.gray[200],
   },
   modalTitle: {
-    fontSize: 20,
-    fontFamily: 'Inter-SemiBold',
-    color: '#2D2D2D',
+    fontSize: Typography.fontSize.xl,
+    fontFamily: Typography.fontFamily.semiBold,
+    color: Colors.text.primary,
   },
   closeButton: {
-    padding: 4,
+    padding: Spacing.xs,
   },
   inputSection: {
-    marginBottom: 20,
+    marginBottom: Spacing.xl,
   },
   inputRow: {
     flexDirection: 'row',
-    gap: 16,
-    marginBottom: 20,
+    gap: Gap.lg,
+    marginBottom: Spacing.xl,
   },
   inputHalf: {
     flex: 1,
   },
   label: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: '#2D2D2D',
-    marginBottom: 8,
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.medium,
+    color: Colors.text.primary,
+    marginBottom: Spacing.sm,
   },
   input: {
-    backgroundColor: '#F8F8F8',
-    borderRadius: 10,
-    padding: 16,
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: '#2D2D2D',
+    backgroundColor: Colors.gray[50],
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    fontSize: Typography.fontSize.base,
+    fontFamily: Typography.fontFamily.regular,
+    color: Colors.text.primary,
     borderWidth: 1,
-    borderColor: '#E8E8E8',
+    borderColor: Colors.gray[200],
   },
-  dateInput: {
-    backgroundColor: '#F8F8F8',
-    borderRadius: 10,
-    padding: 16,
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: '#2D2D2D',
-    borderWidth: 1,
-    borderColor: '#E8E8E8',
+  dateButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.primaryLight + '20',
+    borderWidth: 2,
+    borderColor: Colors.primaryLight,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    gap: Gap.md,
+  },
+  dateText: {
+    fontSize: Typography.fontSize.base,
+    fontFamily: Typography.fontFamily.medium,
+    color: Colors.primary,
+    flex: 1,
   },
   goalsContainer: {
     flexDirection: 'row',
-    gap: 12,
+    gap: Gap.md,
   },
   goalButton: {
     flex: 1,
-    backgroundColor: '#F8F8F8',
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    backgroundColor: Colors.gray[50],
+    borderRadius: BorderRadius.lg,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
     borderWidth: 2,
-    borderColor: '#E8E8E8',
+    borderColor: Colors.gray[200],
     alignItems: 'center',
   },
   goalText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: '#696969',
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.medium,
+    color: Colors.text.secondary,
   },
   activeGoalText: {
-    color: '#FFFFFF',
+    color: Colors.white,
   },
   submitButton: {
-    backgroundColor: '#FF69B4',
-    borderRadius: 15,
-    paddingVertical: 16,
+    backgroundColor: Colors.primary,
+    borderRadius: BorderRadius.xl,
+    paddingVertical: Spacing.lg,
     alignItems: 'center',
-    marginTop: 20,
-    elevation: 3,
-    shadowColor: '#FF69B4',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    marginTop: Spacing.xl,
+    ...Shadows.lg,
   },
   disabledButton: {
-    backgroundColor: '#D3D3D3',
+    backgroundColor: Colors.gray[300],
     shadowOpacity: 0,
     elevation: 0,
   },
   submitButtonText: {
-    fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
-    color: '#FFFFFF',
+    fontSize: Typography.fontSize.base,
+    fontFamily: Typography.fontFamily.semiBold,
+    color: Colors.white,
   },
 });

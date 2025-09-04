@@ -18,7 +18,9 @@ export function CycleCalculator({ cycleData }: CycleCalculatorProps) {
     nextPeriod.setDate(lastPeriod.getDate() + cycleData.cycleLength);
 
     const ovulationDay = new Date(lastPeriod);
-    ovulationDay.setDate(lastPeriod.getDate() + Math.floor(cycleData.cycleLength / 2));
+    ovulationDay.setDate(
+      lastPeriod.getDate() + Math.floor(cycleData.cycleLength / 2)
+    );
 
     const fertileStart = new Date(ovulationDay);
     fertileStart.setDate(ovulationDay.getDate() - 2);
@@ -48,8 +50,10 @@ export function CycleCalculator({ cycleData }: CycleCalculatorProps) {
 
   const getPeriodStatus = () => {
     if (daysUntilPeriod <= 0) return { text: '생리 기간', color: '#DC143C' };
-    if (daysUntilPeriod <= 3) return { text: `${daysUntilPeriod}일 후 생리 예정`, color: '#FF69B4' };
-    if (daysUntilOvulation <= 2 && daysUntilOvulation >= -2) return { text: '가임기', color: '#9370DB' };
+    if (daysUntilPeriod <= 3)
+      return { text: `${daysUntilPeriod}일 후 생리 예정`, color: '#FF69B4' };
+    if (daysUntilOvulation <= 2 && daysUntilOvulation >= -2)
+      return { text: '가임기', color: '#9370DB' };
     return { text: '안정기', color: '#32CD32' };
   };
 
@@ -58,7 +62,9 @@ export function CycleCalculator({ cycleData }: CycleCalculatorProps) {
   return (
     <View style={styles.container}>
       <View style={[styles.statusCard, { borderLeftColor: status.color }]}>
-        <Text style={[styles.statusText, { color: status.color }]}>{status.text}</Text>
+        <Text style={[styles.statusText, { color: status.color }]}>
+          {status.text}
+        </Text>
       </View>
 
       <View style={styles.datesGrid}>
@@ -76,8 +82,11 @@ export function CycleCalculator({ cycleData }: CycleCalculatorProps) {
           <Text style={styles.dateLabel}>배란일</Text>
           <Text style={styles.dateValue}>{dates.ovulation}</Text>
           <Text style={styles.daysText}>
-            {daysUntilOvulation > 0 ? `${daysUntilOvulation}일 후` : 
-             daysUntilOvulation === 0 ? '오늘' : '지남'}
+            {daysUntilOvulation > 0
+              ? `${daysUntilOvulation}일 후`
+              : daysUntilOvulation === 0
+              ? '오늘'
+              : '지남'}
           </Text>
         </View>
 

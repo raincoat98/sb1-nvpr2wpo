@@ -1,7 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Switch,
+  Platform,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { User, Bell, Calendar, Info, Trash2 } from 'lucide-react-native';
+import {
+  Colors,
+  Typography,
+  Spacing,
+  BorderRadius,
+  Shadows,
+} from '@/constants/theme';
 
 export default function SettingsScreen() {
   const [notifications, setNotifications] = useState({
@@ -10,10 +25,10 @@ export default function SettingsScreen() {
     healthTips: true,
   });
 
-  const toggleNotification = (key) => {
-    setNotifications(prev => ({
+  const toggleNotification = (key: keyof typeof notifications) => {
+    setNotifications((prev) => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: !prev[key],
     }));
   };
 
@@ -28,7 +43,7 @@ export default function SettingsScreen() {
           subtitle: '생리 예정일 1-2일 전 알림',
           type: 'switch',
           value: notifications.periodReminder,
-          onPress: () => toggleNotification('periodReminder')
+          onPress: () => toggleNotification('periodReminder'),
         },
         {
           id: 'ovulationReminder',
@@ -36,7 +51,7 @@ export default function SettingsScreen() {
           subtitle: '배란일 및 가임기 알림',
           type: 'switch',
           value: notifications.ovulationReminder,
-          onPress: () => toggleNotification('ovulationReminder')
+          onPress: () => toggleNotification('ovulationReminder'),
         },
         {
           id: 'healthTips',
@@ -44,9 +59,9 @@ export default function SettingsScreen() {
           subtitle: '주기별 건강 관리 팁',
           type: 'switch',
           value: notifications.healthTips,
-          onPress: () => toggleNotification('healthTips')
-        }
-      ]
+          onPress: () => toggleNotification('healthTips'),
+        },
+      ],
     },
     {
       title: '주기 설정',
@@ -57,16 +72,16 @@ export default function SettingsScreen() {
           title: '주기 정보 수정',
           subtitle: '평균 주기 및 생리 기간 변경',
           type: 'button',
-          onPress: () => console.log('Edit cycle')
+          onPress: () => console.log('Edit cycle'),
         },
         {
           id: 'cycleHistory',
           title: '주기 기록',
           subtitle: '과거 생리 기록 확인',
           type: 'button',
-          onPress: () => console.log('Cycle history')
-        }
-      ]
+          onPress: () => console.log('Cycle history'),
+        },
+      ],
     },
     {
       title: '앱 정보',
@@ -77,39 +92,44 @@ export default function SettingsScreen() {
           title: '앱 정보',
           subtitle: '버전 1.0.0',
           type: 'button',
-          onPress: () => console.log('About')
+          onPress: () => console.log('About'),
         },
         {
           id: 'privacy',
           title: '개인정보 처리방침',
           subtitle: '데이터 보호 정책',
           type: 'button',
-          onPress: () => console.log('Privacy')
+          onPress: () => console.log('Privacy'),
         },
         {
           id: 'terms',
           title: '이용약관',
           subtitle: '서비스 이용 규정',
           type: 'button',
-          onPress: () => console.log('Terms')
-        }
-      ]
-    }
+          onPress: () => console.log('Terms'),
+        },
+      ],
+    },
   ];
 
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#FFE4E1', '#FFF0F5']}
-        style={styles.header}>
+        colors={Colors.gradients.header as any}
+        style={styles.header}
+      >
         <Text style={styles.headerTitle}>설정</Text>
         <Text style={styles.headerSubtitle}>개인화 및 앱 설정</Text>
       </LinearGradient>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.profileCard}>
           <View style={styles.profileIcon}>
-            <User size={32} color="#FF69B4" strokeWidth={2} />
+            <User size={32} color={Colors.primary} strokeWidth={2} />
           </View>
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>사용자</Text>
@@ -122,7 +142,11 @@ export default function SettingsScreen() {
           return (
             <View key={section.title} style={styles.sectionCard}>
               <View style={styles.sectionHeader}>
-                <IconComponent size={20} color="#FF69B4" strokeWidth={2} />
+                <IconComponent
+                  size={20}
+                  color={Colors.primary}
+                  strokeWidth={2}
+                />
                 <Text style={styles.sectionTitle}>{section.title}</Text>
               </View>
 
@@ -130,7 +154,8 @@ export default function SettingsScreen() {
                 <TouchableOpacity
                   key={item.id}
                   style={styles.settingItem}
-                  onPress={item.onPress}>
+                  onPress={item.onPress}
+                >
                   <View style={styles.settingInfo}>
                     <Text style={styles.settingTitle}>{item.title}</Text>
                     <Text style={styles.settingSubtitle}>{item.subtitle}</Text>
@@ -139,8 +164,11 @@ export default function SettingsScreen() {
                     <Switch
                       value={item.value}
                       onValueChange={item.onPress}
-                      trackColor={{ false: '#F0F0F0', true: '#FFB6C1' }}
-                      thumbColor={item.value ? '#FF69B4' : '#FFFFFF'}
+                      trackColor={{
+                        false: Colors.gray[200],
+                        true: Colors.primaryLight,
+                      }}
+                      thumbColor={item.value ? Colors.primary : Colors.white}
                     />
                   ) : (
                     <Text style={styles.settingArrow}>›</Text>
@@ -171,154 +199,156 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: Colors.background,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
+    paddingBottom: Spacing.xl,
+    paddingHorizontal: Spacing.xl,
+    borderBottomLeftRadius: BorderRadius['3xl'],
+    borderBottomRightRadius: BorderRadius['3xl'],
   },
   headerTitle: {
-    fontSize: 28,
-    fontFamily: 'Inter-Bold',
-    color: '#8B0000',
+    fontSize: Typography.fontSize['3xl'],
+    fontFamily: Typography.fontFamily.bold,
+    color: Colors.white,
     textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   headerSubtitle: {
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: '#696969',
+    fontSize: Typography.fontSize.base,
+    fontFamily: Typography.fontFamily.regular,
+    color: Colors.white,
     textAlign: 'center',
-    marginTop: 4,
+    marginTop: Spacing.sm,
+    opacity: 0.9,
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   content: {
     flex: 1,
-    padding: 20,
+  },
+  scrollContent: {
+    padding: Spacing.xl,
+    paddingBottom: Spacing['8xl'],
   },
   profileCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    padding: 20,
-    marginBottom: 20,
+    backgroundColor: Colors.white,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.xl,
+    marginBottom: Spacing.xl,
     flexDirection: 'row',
     alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    ...Shadows.md,
   },
   profileIcon: {
     width: 60,
     height: 60,
-    borderRadius: 30,
-    backgroundColor: '#FFE4E1',
+    borderRadius: BorderRadius.full,
+    backgroundColor: Colors.primaryLight + '20',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
+    marginRight: Spacing.lg,
   },
   profileInfo: {
     flex: 1,
   },
   profileName: {
-    fontSize: 18,
-    fontFamily: 'Inter-SemiBold',
-    color: '#2D2D2D',
-    marginBottom: 4,
+    fontSize: Typography.fontSize.lg,
+    fontFamily: Typography.fontFamily.semiBold,
+    color: Colors.text.primary,
+    marginBottom: Spacing.xs,
   },
   profileSubtitle: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: '#696969',
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.regular,
+    color: Colors.text.secondary,
   },
   sectionCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    padding: 20,
-    marginBottom: 20,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    backgroundColor: Colors.white,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.xl,
+    marginBottom: Spacing.xl,
+    ...Shadows.md,
   },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: Spacing.lg,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontFamily: 'Inter-SemiBold',
-    color: '#2D2D2D',
-    marginLeft: 12,
+    fontSize: Typography.fontSize.lg,
+    fontFamily: Typography.fontFamily.semiBold,
+    color: Colors.text.primary,
+    marginLeft: Spacing.md,
   },
   settingItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: '#F8F8F8',
+    borderBottomColor: Colors.gray[100],
   },
   settingInfo: {
     flex: 1,
   },
   settingTitle: {
-    fontSize: 16,
-    fontFamily: 'Inter-Medium',
-    color: '#2D2D2D',
+    fontSize: Typography.fontSize.base,
+    fontFamily: Typography.fontFamily.medium,
+    color: Colors.text.primary,
     marginBottom: 2,
   },
   settingSubtitle: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: '#696969',
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.regular,
+    color: Colors.text.secondary,
   },
   settingArrow: {
-    fontSize: 24,
-    color: '#D3D3D3',
-    fontFamily: 'Inter-Regular',
+    fontSize: Typography.fontSize['2xl'],
+    color: Colors.gray[300],
+    fontFamily: Typography.fontFamily.regular,
   },
   dangerCard: {
-    backgroundColor: '#FFF5F5',
-    borderRadius: 15,
-    padding: 20,
-    marginBottom: 20,
+    backgroundColor: Colors.error + '10',
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.xl,
+    marginBottom: Spacing.xl,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#FFE4E1',
+    borderColor: Colors.error + '20',
   },
   dangerInfo: {
-    marginLeft: 12,
+    marginLeft: Spacing.md,
     flex: 1,
   },
   dangerTitle: {
-    fontSize: 16,
-    fontFamily: 'Inter-Medium',
-    color: '#DC2626',
+    fontSize: Typography.fontSize.base,
+    fontFamily: Typography.fontFamily.medium,
+    color: Colors.error,
     marginBottom: 2,
   },
   dangerSubtitle: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    color: '#991B1B',
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.regular,
+    color: Colors.error,
+    opacity: 0.8,
   },
   versionInfo: {
     alignItems: 'center',
-    marginBottom: 30,
   },
   versionText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: '#696969',
-    marginBottom: 4,
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.medium,
+    color: Colors.text.secondary,
+    marginBottom: Spacing.xs,
   },
   copyrightText: {
-    fontSize: 12,
-    fontFamily: 'Inter-Regular',
-    color: '#A0A0A0',
+    fontSize: Typography.fontSize.xs,
+    fontFamily: Typography.fontFamily.regular,
+    color: Colors.text.tertiary,
   },
 });
