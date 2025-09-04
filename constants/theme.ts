@@ -135,6 +135,7 @@ export const Spacing = {
   '4xl': 40,
   '5xl': 48,
   '6xl': 64,
+  '8xl': 80,
 };
 
 // Gap (Flexbox gap)

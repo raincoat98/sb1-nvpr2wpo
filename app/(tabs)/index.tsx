@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Platform,
-} from 'react-native';
+import { View, StyleSheet, ScrollView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Calendar, CalendarProps } from 'react-native-calendars';
 import {
@@ -16,6 +9,7 @@ import {
   Target,
   Activity,
 } from 'lucide-react-native';
+import { Card, Text, Button, FAB, useTheme } from 'react-native-paper';
 import { CycleCalculator } from '@/components/CycleCalculator';
 import { CycleInput } from '@/components/CycleInput';
 import { DashboardCard } from '@/components/DashboardCard';
@@ -37,6 +31,7 @@ export default function HomeScreen() {
   const [showInput, setShowInput] = useState(false);
   const [markedDates, setMarkedDates] = useState({});
   const { state: gamificationState, addXP } = useGamification();
+  const theme = useTheme();
 
   useEffect(() => {
     generateMarkedDates();
@@ -159,8 +154,12 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient colors={Colors.gradients.header} style={styles.header}>
-        <Text style={styles.headerTitle}>주기를 기록하고, 건강을 쌓다</Text>
-        <Text style={styles.headerSubtitle}>오늘은 생리 3일차 ❤️</Text>
+        <Text variant="headlineMedium" style={styles.headerTitle}>
+          주기를 기록하고, 건강을 쌓다
+        </Text>
+        <Text variant="bodyLarge" style={styles.headerSubtitle}>
+          오늘은 생리 3일차 ❤️
+        </Text>
       </LinearGradient>
 
       <ScrollView
@@ -200,7 +199,9 @@ export default function HomeScreen() {
 
         {/* 목표 진행도 */}
         <View style={styles.progressContainer}>
-          <Text style={styles.progressTitle}>이번 주 목표</Text>
+          <Text variant="titleMedium" style={styles.progressTitle}>
+            이번 주 목표
+          </Text>
           <ProgressBar
             progress={75}
             label="주기 기록 7일 연속"
@@ -210,35 +211,42 @@ export default function HomeScreen() {
 
         {/* 액션 버튼들 */}
         <View style={styles.actionButtons}>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.primaryButton]}
+          <Button
+            mode="contained"
             onPress={handleRecordToday}
+            style={[styles.actionButton, styles.primaryButton]}
+            contentStyle={styles.buttonContent}
+            icon={() => <Heart size={20} color={Colors.white} />}
           >
-            <Heart size={20} color={Colors.white} />
-            <Text style={styles.actionButtonText}>오늘 기록하기</Text>
-          </TouchableOpacity>
+            오늘 기록하기
+          </Button>
 
-          <TouchableOpacity
-            style={[styles.actionButton, styles.secondaryButton]}
+          <Button
+            mode="outlined"
             onPress={handleHealthCheck}
+            style={[styles.actionButton, styles.secondaryButton]}
+            contentStyle={styles.buttonContent}
+            icon={() => <Activity size={20} color={Colors.primary} />}
+            textColor={Colors.primary}
           >
-            <Activity size={20} color={Colors.primary} />
-            <Text style={[styles.actionButtonText, { color: Colors.primary }]}>
-              건강 체크
-            </Text>
-          </TouchableOpacity>
+            건강 체크
+          </Button>
         </View>
 
         {/* 달력 섹션 */}
         <View style={styles.calendarContainer}>
           <View style={styles.calendarHeader}>
-            <Text style={styles.sectionTitle}>주기 달력</Text>
-            <TouchableOpacity
-              style={styles.addButton}
+            <Text variant="titleLarge" style={styles.sectionTitle}>
+              주기 달력
+            </Text>
+            <Button
+              mode="text"
               onPress={() => setShowInput(true)}
-            >
-              <Plus size={16} color={Colors.primary} strokeWidth={2} />
-            </TouchableOpacity>
+              style={styles.addButton}
+              icon={() => (
+                <Plus size={16} color={Colors.primary} strokeWidth={2} />
+              )}
+            />
           </View>
 
           <Calendar
@@ -270,17 +278,23 @@ export default function HomeScreen() {
 
         {!cycleData && periodRecords.length === 0 && (
           <View style={styles.welcomeContainer}>
-            <Text style={styles.welcomeTitle}>첫 번째 주기를 입력해주세요</Text>
-            <Text style={styles.welcomeSubtitle}>
+            <Text variant="headlineSmall" style={styles.welcomeTitle}>
+              첫 번째 주기를 입력해주세요
+            </Text>
+            <Text variant="bodyMedium" style={styles.welcomeSubtitle}>
               정확한 예측을 위해 최근 생리 정보가 필요합니다
             </Text>
-            <TouchableOpacity
-              style={styles.startButton}
+            <Button
+              mode="contained"
               onPress={() => setShowInput(true)}
+              style={styles.startButton}
+              contentStyle={styles.buttonContent}
+              icon={() => (
+                <Plus size={20} color={Colors.white} strokeWidth={2} />
+              )}
             >
-              <Plus size={20} color={Colors.white} strokeWidth={2} />
-              <Text style={styles.startButtonText}>시작하기</Text>
-            </TouchableOpacity>
+              시작하기
+            </Button>
           </View>
         )}
 
@@ -289,7 +303,9 @@ export default function HomeScreen() {
             <CycleCalculator cycleData={cycleData} />
 
             <View style={styles.legendContainer}>
-              <Text style={styles.legendTitle}>주기 안내</Text>
+              <Text variant="titleMedium" style={styles.legendTitle}>
+                주기 안내
+              </Text>
               <View style={styles.legendRow}>
                 <View style={styles.legendItem}>
                   <View
@@ -298,7 +314,9 @@ export default function HomeScreen() {
                       { backgroundColor: Colors.period },
                     ]}
                   />
-                  <Text style={styles.legendText}>생리 기간</Text>
+                  <Text variant="bodyMedium" style={styles.legendText}>
+                    생리 기간
+                  </Text>
                 </View>
                 <View style={styles.legendItem}>
                   <View
@@ -307,7 +325,9 @@ export default function HomeScreen() {
                       { backgroundColor: Colors.fertile },
                     ]}
                   />
-                  <Text style={styles.legendText}>가임기</Text>
+                  <Text variant="bodyMedium" style={styles.legendText}>
+                    가임기
+                  </Text>
                 </View>
                 <View style={styles.legendItem}>
                   <View
@@ -316,7 +336,9 @@ export default function HomeScreen() {
                       { backgroundColor: Colors.ovulation },
                     ]}
                   />
-                  <Text style={styles.legendText}>배란일</Text>
+                  <Text variant="bodyMedium" style={styles.legendText}>
+                    배란일
+                  </Text>
                 </View>
               </View>
             </View>
@@ -405,11 +427,6 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.xl,
-    paddingHorizontal: Spacing['2xl'],
     borderRadius: BorderRadius['2xl'],
     ...Shadows.md,
   },
@@ -421,11 +438,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: Colors.primary,
   },
-  actionButtonText: {
-    fontSize: Typography.fontSize.base,
-    fontFamily: Typography.fontFamily.semiBold,
-    color: Colors.white,
-    marginLeft: Spacing.md,
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Spacing.xl,
+    paddingHorizontal: Spacing['2xl'],
+    gap: Gap.md,
   },
   sectionTitle: {
     fontSize: Typography.fontSize.lg,
@@ -459,18 +477,8 @@ const styles = StyleSheet.create({
   },
   startButton: {
     backgroundColor: Colors.primary,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Spacing.xl,
-    paddingHorizontal: Spacing['3xl'],
     borderRadius: BorderRadius['2xl'],
-    gap: Gap.md,
     ...Shadows.lg,
-  },
-  startButtonText: {
-    fontSize: Typography.fontSize.base,
-    fontFamily: Typography.fontFamily.semiBold,
-    color: Colors.white,
   },
   calendarContainer: {
     backgroundColor: Colors.white,
@@ -486,12 +494,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   addButton: {
-    width: 32,
-    height: 32,
+    minWidth: 32,
+    minHeight: 32,
     borderRadius: BorderRadius.full,
     backgroundColor: Colors.primaryLight + '20',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   calendar: {
     borderRadius: BorderRadius.lg,

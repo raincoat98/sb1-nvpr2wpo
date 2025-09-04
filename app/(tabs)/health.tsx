@@ -38,6 +38,7 @@ export default function HealthScreen() {
   // 접종 관리 상태
   const [vaccinations, setVaccinations] = useState({
     hpv: { completed: false, doses: 0, totalDoses: 3 },
+    gardasil: { completed: false, doses: 0, totalDoses: 3 },
     cervicalCancer: { completed: false, doses: 0, totalDoses: 2 },
     mmr: { completed: false, doses: 0, totalDoses: 2 },
     hepatitisB: { completed: false, doses: 0, totalDoses: 3 },
@@ -248,6 +249,52 @@ export default function HealthScreen() {
                   const newDoses =
                     vaccinations.hpv.doses > 0 ? vaccinations.hpv.doses - 1 : 0;
                   handleVaccinationEdit('hpv', newDoses);
+                }}
+              >
+                <Text style={styles.editButtonText}>-1</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.vaccinationItem}>
+          <View style={styles.vaccinationInfo}>
+            <Text style={styles.vaccinationName}>가다실 (Gardasil)</Text>
+            <Text style={styles.vaccinationDescription}>HPV 4가 백신</Text>
+            <Text style={styles.vaccinationDoses}>
+              {vaccinations.gardasil.doses}/{vaccinations.gardasil.totalDoses}차
+              완료
+            </Text>
+          </View>
+          <View style={styles.vaccinationActions}>
+            {vaccinations.gardasil.completed ? (
+              <View style={styles.completedBadge}>
+                <CheckCircle size={20} color={Colors.success} />
+                <Text style={styles.completedText}>완료</Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.vaccinationButton}
+                onPress={() => handleVaccinationComplete('gardasil')}
+              >
+                <Text style={styles.vaccinationButtonText}>접종 완료</Text>
+              </TouchableOpacity>
+            )}
+            <View style={styles.vaccinationEditActions}>
+              <TouchableOpacity
+                style={styles.editButton}
+                onPress={() => handleVaccinationReset('gardasil')}
+              >
+                <Text style={styles.editButtonText}>리셋</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.editButton}
+                onPress={() => {
+                  const newDoses =
+                    vaccinations.gardasil.doses > 0
+                      ? vaccinations.gardasil.doses - 1
+                      : 0;
+                  handleVaccinationEdit('gardasil', newDoses);
                 }}
               >
                 <Text style={styles.editButtonText}>-1</Text>
@@ -688,7 +735,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: Spacing['8xl'],
+    paddingBottom: Spacing['6xl'],
   },
   content: {
     padding: Spacing.xl,

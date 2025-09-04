@@ -11,8 +11,37 @@ import {
 } from '@expo-google-fonts/inter';
 import * as SplashScreen from 'expo-splash-screen';
 import { GamificationProvider } from '@/contexts/GamificationContext';
+import {
+  PaperProvider,
+  MD3LightTheme,
+  configureFonts,
+} from 'react-native-paper';
+import { Colors } from '@/constants/theme';
 
 SplashScreen.preventAutoHideAsync();
+
+// Paper 테마 설정
+const paperTheme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: Colors.primary,
+    secondary: Colors.secondary,
+    tertiary: Colors.accent,
+    surface: Colors.white,
+    background: Colors.background,
+    error: Colors.error,
+    onPrimary: Colors.white,
+    onSecondary: Colors.white,
+    onSurface: Colors.text,
+    onBackground: Colors.text,
+  },
+  fonts: configureFonts({
+    config: {
+      fontFamily: 'Inter-Regular',
+    },
+  }),
+};
 
 export default function RootLayout() {
   useFrameworkReady();
@@ -35,12 +64,14 @@ export default function RootLayout() {
   }
 
   return (
-    <GamificationProvider>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </GamificationProvider>
+    <PaperProvider theme={paperTheme}>
+      <GamificationProvider>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      </GamificationProvider>
+    </PaperProvider>
   );
 }
